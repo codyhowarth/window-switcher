@@ -5,7 +5,7 @@ global vscodeIndex := 1
 global neovideIndex := 1
 global teamsIndex := 1
 global lastWindowType := ""
-1
+
 ; Function to restore a window if it is minimized
 restoreWindowIfMinimized(window) {
     if (WinGetMinMax(window) = -1) { ; Check if the window is minimized (MinMax = -1)
@@ -13,10 +13,19 @@ restoreWindowIfMinimized(window) {
     }
 }
 
-; Function to cycle through windows with a check for the current active window
-cycleWindows(exeName, indexRef, windowType) {
+; Function to cycle through windows with support for multiple .exe types
+cycleWindows(exeNames, indexRef, windowType) {
     global lastWindowType
-    windows := WinGetList("ahk_exe " exeName)
+    windows := []
+
+    ; Collect windows for all specified .exe names
+    for _, exeName in exeNames {
+        windowsForExe := WinGetList("ahk_exe " exeName)
+        for _, window in windowsForExe {
+            windows.Push(window)
+        }
+    }
+
     filteredWindows := []
 
     ; Filter windows to exclude those without a title or not visible
@@ -57,7 +66,7 @@ cycleWindows(exeName, indexRef, windowType) {
         ; Update the last window type
         lastWindowType := windowType
     } else {
-        MsgBox("No valid windows found for " exeName)
+        MsgBox("No valid windows found for specified executables")
     }
     return indexRef
 }
@@ -65,29 +74,29 @@ cycleWindows(exeName, indexRef, windowType) {
 ; Switch to MS Edge and cycle through windows
 !1:: {
     global edgeIndex, lastWindowType
-    edgeIndex := cycleWindows("msedge.exe", edgeIndex, "edge")
+    edgeIndex := cycleWindows(["msedge.exe"], edgeIndex, "edge")
 }
 
 ; Switch to Windows Terminal and cycle through windows
 !2:: {
     global terminalIndex, lastWindowType
-    terminalIndex := cycleWindows("WindowsTerminal.exe", terminalIndex, "terminal")
+    terminalIndex := cycleWindows(["WindowsTerminal.exe"], terminalIndex, "terminal")
 }
 
 ; Switch to Neovide and cycle through windows
 !3:: {
     global neovideIndex, lastWindowType
-    neovideIndex := cycleWindows("neovide.exe", neovideIndex, "neovide")
+    neovideIndex := cycleWindows(["neovide.exe"], neovideIndex, "neovide")
 }
 
 ; Switch to Microsoft Teams and cycle through windows
 !4:: {
     global teamsIndex, lastWindowType
-    teamsIndex := cycleWindows("ms-teams.exe", teamsIndex, "teams")
+    teamsIndex := cycleWindows(["ms-teams.exe"], teamsIndex, "teams")
 }
 
 ; Switch to Visual Studio Code and cycle through windows
 !5:: {
     global vscodeIndex, lastWindowType
-    vscodeIndex := cycleWindows("Code.exe", vscodeIndex, "vscode")
+    vscodeIndex := cycleWindows(["Code.exe", "devenv.exe"], vscodeIndex, "vscode")
 }
