@@ -13,8 +13,17 @@ restoreWindowIfMinimized(window) {
     }
 }
 
-; Function to cycle through windows with support for multiple .exe types
-cycleWindows(exeNames, indexRef, windowType) {
+; Function to launch an executable if no windows of the type exist
+launchExeIfNoWindows(exeName) {
+    try {
+        Run(exeName)
+    } catch {
+        MsgBox("Failed to launch " exeName)
+    }
+}
+
+; Updated cycleWindows function to accept a launchExeName parameter
+cycleWindows(exeNames, indexRef, windowType, launchExeName) {
     global lastWindowType
     windows := []
 
@@ -66,7 +75,12 @@ cycleWindows(exeNames, indexRef, windowType) {
         ; Update the last window type
         lastWindowType := windowType
     } else {
-        MsgBox("No valid windows found for specified executables")
+        ; Launch the executable if no windows exist
+        try {
+            Run(launchExeName)
+        } catch {
+            MsgBox("Failed to launch " launchExeName)
+        }
     }
     return indexRef
 }
@@ -74,29 +88,29 @@ cycleWindows(exeNames, indexRef, windowType) {
 ; Switch to MS Edge and cycle through windows
 !1:: {
     global edgeIndex, lastWindowType
-    edgeIndex := cycleWindows(["msedge.exe"], edgeIndex, "edge")
+    edgeIndex := cycleWindows(["msedge.exe"], edgeIndex, "edge", "msedge.exe")
 }
 
 ; Switch to Windows Terminal and cycle through windows
 !2:: {
     global terminalIndex, lastWindowType
-    terminalIndex := cycleWindows(["WindowsTerminal.exe"], terminalIndex, "terminal")
+    terminalIndex := cycleWindows(["WindowsTerminal.exe"], terminalIndex, "terminal", "wt.exe")
 }
 
 ; Switch to Neovide and cycle through windows
 !3:: {
     global neovideIndex, lastWindowType
-    neovideIndex := cycleWindows(["neovide.exe"], neovideIndex, "neovide")
+    neovideIndex := cycleWindows(["neovide.exe"], neovideIndex, "neovide", "neovide.exe")
 }
 
 ; Switch to Microsoft Teams and cycle through windows
 !4:: {
     global teamsIndex, lastWindowType
-    teamsIndex := cycleWindows(["ms-teams.exe"], teamsIndex, "teams")
+    teamsIndex := cycleWindows(["ms-teams.exe"], teamsIndex, "teams", "ms-teams.exe")
 }
 
 ; Switch to Visual Studio Code and cycle through windows
 !5:: {
     global vscodeIndex, lastWindowType
-    vscodeIndex := cycleWindows(["Code.exe", "devenv.exe"], vscodeIndex, "vscode")
+    vscodeIndex := cycleWindows(["Code.exe", "devenv.exe"], vscodeIndex, "vscode", "code")
 }
