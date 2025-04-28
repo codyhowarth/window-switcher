@@ -97,20 +97,20 @@ cycleWindows(exeNames, indexRef, windowType, launchExeName) {
     terminalIndex := cycleWindows(["WindowsTerminal.exe"], terminalIndex, "terminal", "wt.exe")
 }
 
-; Switch to Neovide and cycle through windows
-!3:: {
-    global neovideIndex, lastWindowType
-    neovideIndex := cycleWindows(["neovide.exe"], neovideIndex, "neovide", "neovide.exe")
-}
-
 ; Switch to Microsoft Teams and cycle through windows
-!4:: {
+!3:: {
     global teamsIndex, lastWindowType
     teamsIndex := cycleWindows(["ms-teams.exe"], teamsIndex, "teams", "ms-teams.exe")
 }
 
 ; Switch to Visual Studio Code and cycle through windows
-!5:: {
+!4:: {
     global vscodeIndex, lastWindowType
     vscodeIndex := cycleWindows(["Code.exe", "devenv.exe"], vscodeIndex, "vscode", "code")
+}
+
+; Switch to Neovide and cycle through windows
+!5:: {
+    global neovideIndex, lastWindowType
+    neovideIndex := cycleWindows(["neovide.exe"], neovideIndex, "neovide", "neovide.exe")
 }
